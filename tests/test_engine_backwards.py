@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from mini_auto_grad.engine import Value
+from mini_auto_grad.engine import Value, find_reversed_topological_order
 
 
 @pytest.mark.parametrize("data", [-1.0, 0, 1.0, 10], ids=lambda d: f"data={d}")
@@ -66,7 +66,7 @@ def test_example1(a: float, b: float) -> None:
     [
         (4, -1, 1),
         (2, 2, 2),
-        (-3, 9, 1),
+        (-3, 9, 2),
         (0, 1, 8),
     ],
 )
@@ -94,7 +94,12 @@ def test_example_2(a: float, b: float, c: float) -> None:
 
 @pytest.mark.parametrize(
     "a,b,c",
-    [(4, -1, 1), (2, 2, 2), (-3, 9, 1), (0, 1, 8)],
+    [
+        (4, -1, 1),
+        (2, 2, 2),
+        (-3, 9, 1),
+        (0, 1, 8),
+    ],
 )
 def test_example_3(a: float, b: float, c: float) -> None:
     a = Value(a)

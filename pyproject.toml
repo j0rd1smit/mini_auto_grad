@@ -9,6 +9,8 @@ packages = [{include = "mini_auto_grad", from = "src"}]
 [tool.poetry.dependencies]
 python = "3.9.*"
 torch = "^1.12.1"
+graphviz = "^0.20.1"
+numpy = "^1.23.3"
 
 
 [tool.poetry.group.dev.dependencies]

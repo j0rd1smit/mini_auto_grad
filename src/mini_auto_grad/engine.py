@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import Callable, Optional, Union
 
 Backwards = Callable[[float], None]
@@ -15,13 +16,17 @@ class Value:
         data: float,
         children: Optional[set[Value]] = None,
         _backwards: Backwards = _noop_grad,
+        _op: str = "",
     ):
         self.data = data
         self.grad = 0.0
         self.children = set() if children is None else children
         self._backwards = _backwards
+        self._op = _op
 
     def __add__(self, other: Union[float, Value]) -> Value:
+        """self + other"""
+
         if isinstance(other, (float, int)):
             other = Value(other)
 
@@ -30,7 +35,10 @@ class Value:
             other.grad += grad_parent
 
         return Value(
-            self.data + other.data, children={self, other}, _backwards=_backward
+            self.data + other.data,
+            children={self, other},
+            _backwards=_backward,
+            _op="+",
         )
 
     def __mul__(self, other: Union[float, Value]) -> Value:
@@ -42,66 +50,109 @@ class Value:
             other.grad += self.data * grad_parent
 
         return Value(
-            self.data * other.data, children={self, other}, _backwards=_backward
+            self.data * other.data,
+            children={self, other},
+            _backwards=_backward,
+            _op="*",
         )
 
-    def relu(self):
-        def _backward(grad_parent: float) -> None:
+    def relu(self) -> Value:
+        def _backwards(grad_parent: float) -> None:
             local_gradient = 1.0 if self.data > 0 else 0.0
             self.grad += local_gradient * grad_parent
 
         output_data = 0 if self.data < 0 else self.data
-        return Value(output_data, children={self}, _backwards=_backward)
+        return Value(
+            output_data,
+            children={self},
+            _backwards=_backwards,
+            _op="relu",
+        )
 
-    def __neg__(self) -> Value:
-        return self * -1
+    def tanh(self) -> Value:
+        def _backwards(grad_parent: float) -> None:
+            local_gradient = 1 - math.tanh(self.data) ** 2
+            self.grad += local_gradient * grad_parent
 
-    def __radd__(self, other: Union[Value, float]) -> Value:
-        return self + other
+        return Value(
+            math.tanh(self.data),
+            children={self},
+            _backwards=_backwards,
+            _op="tanh",
+        )
 
-    def __sub__(self, other: Union[Value, float]) -> Value:
-        return self + (-other)
+    def __pow__(self, power: float) -> Value:
+        """self ** power"""
+        assert isinstance(power, (int, float)), "Only support int/float powers"
 
-    def __rsub__(self, other: Union[Value, float]) -> Value:
-        return other + (-self)
+        def _backward(grad_parent: float) -> None:
+            self.grad += (power * self.data ** (power - 1)) * grad_parent
 
-    def __rmul__(self, other: Union[Value, float]) -> Value:
-        return self * other
-
-    def __truediv__(self, other: Union[Value, float]):
-        raise NotImplemented()
-
-    def __rtruediv__(self, other):  # other / self
-        raise NotImplemented()
-
-    def __pow__(self, power: float, modulo=None) -> Value:
-        raise NotImplemented()
+        return Value(
+            self.data**power, children={self}, _backwards=_backward, _op=f"^{power}"
+        )
 
     def backward(self) -> None:
         self.grad = 1
 
+        # for v in find_reversed_topological_order(self):
         for v in find_reversed_topological_order(self):
             v._backwards(v.grad)
+
+    def __neg__(self) -> Value:
+        """-self"""
+        return self * -1
+
+    def __radd__(self, other: Union[Value, float]) -> Value:
+        """other + self
+        Python fallback when other is not a Value.
+        """
+        return self + other
+
+    def __sub__(self, other: Union[Value, float]) -> Value:
+        """self - other"""
+
+        return self + (-other)
+
+    def __rsub__(self, other: float) -> Value:
+        """other - self
+        Python fallback when other is not a Value.
+        """
+        return other + (-self)
+
+    def __rmul__(self, other: float) -> Value:
+        """other * self
+        Python fallback when other is not a Value.
+        """
+        return self * other
+
+    def __truediv__(self, other: float):
+        """self / other"""
+        return self * other**-1
+
+    def __rtruediv__(self, other: float):
+        """other / self
+        Python fallback when other is not a Value.
+        """
+        return other * self**-1
 
     def __repr__(self) -> str:
         return f"Value(data={self.data})"
 
 
-def find_reversed_topological_order(start: Value) -> list[Value]:
+def find_reversed_topological_order(root: Value):
     visited = set()
-    order = []
-    _build_topological_order(start, visited, order)
-    return list(reversed(order))
+    topological_order = []
 
+    def _depth_first_search(node: Value):
+        if node not in visited:
+            visited.add(node)
 
-def _build_topological_order(
-    node: Value, visited: set[Value], order: list[Value]
-) -> list[Value]:
-    if node not in visited:
-        visited.add(node)
-        for child in node.children:
-            _build_topological_order(child, visited, order)
+            for child in node.children:
+                _depth_first_search(child)
 
-        order.append(node)
+            topological_order.append(node)
 
-    return order
+    _depth_first_search(root)
+
+    return list(reversed(topological_order))
