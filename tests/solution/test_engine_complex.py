@@ -6,11 +6,10 @@ try:
     import torch
 except ImportError:
     pass
-from mini_auto_grad.engine import Value
+from mini_auto_grad.solution.engine import Value
 
 
 @pytest.mark.skipif("torch" not in sys.modules, reason="Requires the torch library")
-@pytest.mark.ex2()
 def test_sanity_check():
     x = Value(-4.0)
     z = 2 * x + 2 + x
@@ -36,7 +35,6 @@ def test_sanity_check():
 
 
 @pytest.mark.skipif("torch" not in sys.modules, reason="Requires the torch library")
-@pytest.mark.ex2()
 def test_more_ops():
     a = Value(-4.0)
     b = Value(2.0)

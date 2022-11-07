@@ -1,10 +1,10 @@
 import pytest
 
-from mini_auto_grad.engine import Value
-from mini_auto_grad.nn import MLP
+from mini_auto_grad.solution.engine import Value
+from mini_auto_grad.solution.nn import MLP
 
 
-@pytest.mark.ex3()
+@pytest.mark.solution()
 def test_mlp_can_learn_xor_problem() -> None:
     x = [
         [0, 1],

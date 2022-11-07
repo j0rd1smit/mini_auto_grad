@@ -1,10 +1,10 @@
 import pytest
 
-from mini_auto_grad.engine import Value
+from mini_auto_grad.solution.engine import Value
 
 
 @pytest.mark.parametrize("data", [-1.0, 0, 1.0, 10], ids=lambda d: f"data={d}")
-@pytest.mark.ex2()
+@pytest.mark.solution()
 def test_gradient_with_respect_to_self_is_one(data: float) -> None:
     value = Value(data)
     assert value.grad == 0
@@ -23,7 +23,7 @@ def test_gradient_with_respect_to_self_is_one(data: float) -> None:
         (0, 1),
     ],
 )
-@pytest.mark.ex2()
+@pytest.mark.solution()
 def test_multiplication(a: float, b: float) -> None:
     a = Value(a)
     b = Value(b)
@@ -71,7 +71,7 @@ def test_addition(a: float, b: float) -> None:
         (0, 1, 8),
     ],
 )
-@pytest.mark.ex2()
+@pytest.mark.solution()
 def test_deep_multiplication(a: float, b: float, c: float) -> None:
     a = Value(a)
     b = Value(b)

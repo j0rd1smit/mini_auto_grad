@@ -2,7 +2,7 @@ import abc
 import random
 from typing import Union
 
-from mini_auto_grad.engine import Value
+from mini_auto_grad.solution.engine import Value
 
 
 class Module(abc.ABC):
@@ -17,15 +17,15 @@ class Module(abc.ABC):
 
 class Neuron(Module):
     def __init__(self, n_features: int, non_linear: bool = True) -> None:
-        self.weights = []  # TODO ex3
-        self.bias = ...  # TODO ex3
+        self.weights = [Value(random.uniform(-1, 1)) for _ in range(n_features)]
+        self.bias = Value(0)
         self.non_linear = non_linear
 
     def parameters(self) -> list[Value]:
-        return ...  # TODO ex3
+        return self.weights + [self.bias]
 
     def __call__(self, x: list[Union[Value, float]]) -> Value:
-        activation = ...  # TODO ex3
+        activation = sum(w_i * x_i for w_i, x_i in zip(self.weights, x)) + self.bias
 
         if self.non_linear:
             return activation.tanh()
@@ -44,13 +44,15 @@ class Layer(Module):
         self.n_features_out = n_features_out
         self.non_linear = non_linear
 
-        self.neurons = [...]  # TODO ex3
+        self.neurons = [
+            Neuron(n_features_in, non_linear) for _ in range(n_features_out)
+        ]
 
     def __call__(self, x) -> list[Value]:
-        return ...  # TODO ex3
+        return [n(x) for n in self.neurons]
 
     def parameters(self) -> list[Value]:
-        return [...]  # TODO ex3
+        return [p for n in self.neurons for p in n.parameters()]
 
     def __repr__(self):
         return f"Layer({self.n_features_in}, {self.n_features_out}, {self.non_linear})"
@@ -62,7 +64,7 @@ class MLP(Module):
         self.layers = _create_layers(sizes)
 
     def parameters(self):
-        return [...]  # TODO ex3
+        return [p for layer in self.layers for p in layer.parameters()]
 
     def __call__(self, x):
         for layer in self.layers:

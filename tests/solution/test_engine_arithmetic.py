@@ -3,7 +3,7 @@ from typing import Union
 
 import pytest
 
-from mini_auto_grad.engine import Value
+from mini_auto_grad.solution.engine import Value
 
 
 @pytest.mark.parametrize(
@@ -16,7 +16,7 @@ from mini_auto_grad.engine import Value
         (-1, Value(3), 2),
     ],
 )
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_addition(
     left: Union[float, Value], right: Union[float, Value], expected_output_data: float
 ) -> None:
@@ -25,7 +25,7 @@ def test_addition(
     assert output.data == expected_output_data
 
 
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_addition_graph() -> None:
     left = Value(1)
     right = Value(1)
@@ -62,7 +62,7 @@ def _is_connected(value: Value, other: Value) -> bool:
         (-1, Value(3), -4),
     ],
 )
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_subtraction(
     left: Union[float, Value], right: Union[float, Value], expected_output_data: float
 ) -> None:
@@ -71,7 +71,7 @@ def test_subtraction(
     assert output.data == expected_output_data
 
 
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_subtraction_graph() -> None:
     left = Value(1)
     right = Value(1)
@@ -91,7 +91,7 @@ def test_subtraction_graph() -> None:
         (-3, Value(3), -9),
     ],
 )
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_multiplication(
     left: Union[float, Value], right: Union[float, Value], expected_output_data: float
 ) -> None:
@@ -100,7 +100,7 @@ def test_multiplication(
     assert output.data == expected_output_data
 
 
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_multiplication_graph() -> None:
     left = Value(1)
     right = Value(1)
@@ -120,7 +120,7 @@ def test_multiplication_graph() -> None:
         (-21, Value(3), -7),
     ],
 )
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_division(
     left: Union[float, Value], right: Union[float, Value], expected_output_data: float
 ) -> None:
@@ -129,7 +129,7 @@ def test_division(
     assert output.data == expected_output_data
 
 
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_division_graph() -> None:
     left = Value(1.0)
     right = Value(1.0)
@@ -149,7 +149,7 @@ def test_division_graph() -> None:
         (Value(-3), 2, 9),
     ],
 )
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_power(
     left: Union[float, Value], right: Union[float, Value], expected_output_data: float
 ) -> None:
@@ -158,7 +158,7 @@ def test_power(
     assert output.data == expected_output_data
 
 
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_power_graph() -> None:
     left = Value(3)
     output = left**2
@@ -176,13 +176,13 @@ def test_power_graph() -> None:
         (0.5, math.tanh(0.5)),
     ],
 )
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_tanh(value: float, expected_output_data: float) -> None:
     value = Value(value)
     assert value.tanh().data == expected_output_data
 
 
-@pytest.mark.ex1()
+@pytest.mark.solution()
 def test_tanh_graph() -> None:
     value = Value(2)
     output = value.tanh()
