@@ -45,17 +45,37 @@ First install the project using:
 poetry run install
 ```
 
+You might need to tell poetry where to find a python 3.9 interpreter using:
+```bash
+poetry env use /path/to/python
+```
+
 ### Exercise 1: Implement the computational graph.
+In this exercise we are going to implement a data structure that keeps track of the computational graph.
+This data structure will be implemented in the `Value` class in `src/mini_auto_grad/engine.py`.
+To implement this functionality you have to do the following:
+1. Implement the arithmetic logic by using the `__add__`, `____radd__`, `__pow__`,  `__mul__`, etc such that the returned value has the correct `data` attribute.
+2. Ensure that the new `Value` instance that is returned by the arithmetic method keeps track of the children that created it. E.g. `x = a + b` then `a` and `b` will be children of `x`.
+
+
+You can verify that you have implemented everything correctly using:
 ```bash
 poetry run pytest -m ex1
 ```
 
 ### Exercise 2: Implement back propagation
+In this exercise we are going to implement the back propagation algorithm.
+
+
+
+You can verify if you have implemented everything correctly using:
 ```bash
 poetry run pytest -m ex2
 ```
 
 ### Exercise 3: Create MLP
+
+You can verify if you have implemented everything correctly using:
 ```bash
 poetry run pytest -m ex3
 ```
