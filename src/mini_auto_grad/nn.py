@@ -25,6 +25,7 @@ class Neuron(Module):
         return ...  # TODO ex3
 
     def __call__(self, x: list[Union[Value, float]]) -> Value:
+        """This is a function f(x) = b + \sum_{i=0}^N x_i * w_i"""
         activation = ...  # TODO ex3
 
         if self.non_linear:
@@ -47,6 +48,7 @@ class Layer(Module):
         self.neurons = [...]  # TODO ex3
 
     def __call__(self, x) -> list[Value]:
+        """This function that takes $n$ inputs and uses $m$ `Neuron` functions to map it to $m$ output features."""
         return ...  # TODO ex3
 
     def parameters(self) -> list[Value]:

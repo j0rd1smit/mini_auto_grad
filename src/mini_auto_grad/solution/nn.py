@@ -25,6 +25,7 @@ class Neuron(Module):
         return self.weights + [self.bias]
 
     def __call__(self, x: list[Union[Value, float]]) -> Value:
+        """This is a function f(x) = b + \sum_{i=0}^N x_i * w_i"""
         activation = sum(w_i * x_i for w_i, x_i in zip(self.weights, x)) + self.bias
 
         if self.non_linear:
@@ -49,6 +50,7 @@ class Layer(Module):
         ]
 
     def __call__(self, x) -> list[Value]:
+        """This function that takes $n$ inputs and uses $m$ `Neuron` functions to map it to $m$ output features."""
         return [n(x) for n in self.neurons]
 
     def parameters(self) -> list[Value]:
