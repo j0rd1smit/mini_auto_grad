@@ -92,3 +92,16 @@ def test_deep_multiplication(a: float, b: float, c: float) -> None:
     assert b.grad == a.data * d.grad
     # d_a / d_e = (d_a / d_d) * (d_d * d_e)
     assert a.grad == b.data * d.grad
+
+
+@pytest.mark.solution()
+@pytest.mark.parametrize("n_additions", [1, 3, 5, 10], ids=lambda d: f"n_additions={d}")
+def test_multiplication_in_the_form_of_addition(n_additions: int):
+    value = Value(1)
+
+    output = Value(1)
+    for _ in range(n_additions):
+        output += value
+
+    output.backward()
+    assert value.grad == n_additions
