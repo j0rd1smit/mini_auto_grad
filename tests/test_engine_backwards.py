@@ -1,3 +1,5 @@
+import math
+
 import pytest
 
 from mini_auto_grad.engine import Value
@@ -105,3 +107,14 @@ def test_multiplication_in_the_form_of_addition(n_additions: int):
 
     output.backward()
     assert value.grad == n_additions
+
+
+@pytest.mark.parametrize("raw_value", [-1, 0, 1], ids=lambda d: f"raw_value={d}")
+@pytest.mark.ex2()
+def test_tanh_backwards(raw_value: float):
+    value = Value(raw_value)
+
+    output = value.tanh()
+    output.backward()
+
+    assert value.grad == 1 - math.tanh(raw_value) ** 2
